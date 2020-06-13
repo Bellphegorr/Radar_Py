@@ -1,28 +1,42 @@
+# GRAPHICS LIBRARY
 from graphics import *
+# ASSIGN OBJECT
 from copy import deepcopy
+# MATH LIBRARY
 import math
+# EXCEL LEARN LIBRARY
 from openpyxl import load_workbook
-from threading import Timer
+from openpyxl.formula import Tokenizer
+# DEBOUNCE TIME
 import time
 
+
+# ------------------------- PRIMITIVE GRAPHICS CLASS -------------------------  #
 class PrimitiveGraphs:
+    
+    # --- CONSTRUCTOR CLASS --- #
     def __init__(self, width = 800, height = 600):
+        # STARTER GRAPHICS LIBRARY
         self.win = GraphWin("Primitive Graphics", width, height)
         self.win.setBackground(color_rgb(16,16,37))
 
+        # DEFINE MAX POSITION IN GRAPHS
         self.x_max = width
         self.y_max = height
 
+        # ZBUFFER ARRAY STARTER POSITIONS
         self.z_buffer = []
         for i in range(width):
             self.z_buffer.append(["empty" for j in range(height)])
 
-        wb = load_workbook(filename = 'Projeto Radar.xlsx')
+        # STARTER EXCEL LEARN LIBRARY
+        wb = load_workbook(filename = 'plnilha de radar.xlsx', data_only=True)
         sheet = wb.active
 
         max_row = sheet.max_row
         max_col = sheet.max_column
 
+        # LEARN EXCEL AND SAVE CELL VALUES
         self.datas = []
 
         for row in range(2, max_row + 1):
@@ -42,10 +56,12 @@ class PrimitiveGraphs:
             self.datas.append(data_row)
 
 
+    # --- RENDER POINT METHOD --- #
     def point(self, x, y, color, width):
         x = x + self.x_max/ 2
         y = self.y_max / 2 - y
 
+        # POINT WIDTH
         if width == 1:
             self.win.plotPixel(x, y, color)
 
@@ -65,7 +81,12 @@ class PrimitiveGraphs:
             self.win.plotPixel(x+2, y-2, color)
 
         try:
-            self.z_buffer[int(x)][int(y)] = color
+            if((x < 1000 and x > 0) and (y < 1000 and y > 0)):
+                self.z_buffer[int(x)][int(y)] = color
+            else:
+                print(x, y)
+        except ValueError:
+            pass
         finally:
             pass
 
@@ -268,7 +289,7 @@ class PrimitiveGraphs:
             self.paint(x, y - 1, color)
 
 
-    def projection(self, x, y, z = 200, f = 50):
+    def projection(self, x, y, z = 200, f = 20):
         F = f * 50
         x_der = (x * f)/(F - z)
         y_der = (y * f)/(F - z)
@@ -399,15 +420,18 @@ class PrimitiveGraphs:
 
     def scan(self, starter):
         datas_scan = []
+        last_index = 0
         
         for i in range(int(starter), len(self.datas)):
             if(i != int(starter)):
+
                 if(self.datas[i][0] != self.datas[i-1][0]):
+                    last_index = i
                     break
 
             datas_scan.append(self.datas[i])
 
-        return datas_scan
+        return [datas_scan, last_index]
 
 
     def learnScan(self, datas):
@@ -416,23 +440,30 @@ class PrimitiveGraphs:
             self.airplaneIcon(x, y, data[1], data[2])
 
 
-
-
-
+# ------------------------- RUNNING PROGRAM -------------------------  #
 size = 1000
 primitive = PrimitiveGraphs(size, size)
 
-primitive.backgroundScreen()
-primitive.saveScreen()
+# primitive.backgroundScreen()
+# primitive.saveScreen()
 
-scan_datas = primitive.scan(0)
+scan_datas, last_index = primitive.scan(0)
 primitive.learnScan(scan_datas)
 
-time.sleep(5)
+time.sleep(1)
 
-primitive.reloadScreen()
+while True:
+    # primitive.reloadScreen() 
+    primitive.win.delete('all')
+    primitive.win.update()
 
-scan_datas = primitive.scan(5)
-primitive.learnScan(scan_datas)
+    scan_datas, last_index = primitive.scan(last_index)
+    primitive.learnScan(scan_datas)
+
+    time.sleep(1)
+
+    if(last_index == 0):
+        break
+
 
 primitive.win.getMouse()
