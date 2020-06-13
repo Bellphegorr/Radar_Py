@@ -80,17 +80,20 @@ class PrimitiveGraphs:
             self.win.plotPixel(x, y-2, color)
             self.win.plotPixel(x+2, y-2, color)
         
+        # Save point in zbuffer
         if((x < self.x_max and x > 0) and (y < self.y_max and y > 0)):
             self.z_buffer[int(x)][int(y)] = color
         else:
             print(x, y)
 
 
+    # --- ACCURATE POINTS (JUST A EXPERIENCE) --- #
     def accuratePoint(self, x, y, color, width):
 
         x = x + self.x_max/ 2
         y = self.y_max / 2 - y
         
+        # PLOT A POINT IN ALL ACCURATE RATE
         for increment in range(width):
             self.win.plotPixel(x, y, color)
 
@@ -128,7 +131,8 @@ class PrimitiveGraphs:
         finally:
             pass
 
-
+    
+    # --- RENDER STRAIGHT --- #
     def straight(self, x1, y1, x2, y2, color, width, style = "continuos"):
         x1 = int(x1)
         y1 = int(y1)
@@ -146,6 +150,7 @@ class PrimitiveGraphs:
         x_inc = 1
         y_inc = 1
 
+        # DEFINE DISTANCE BETWEEN TWO POINTS
         if d_x < 0:
             x_inc = - x_inc
             d_x = - d_x
@@ -154,10 +159,12 @@ class PrimitiveGraphs:
             y_inc = - y_inc
             d_y = - d_y
 
+        # PLOT STRAIGHT IN Y > X
         if d_y <= d_x:
             p = d_x / 2
 
             while x != x2:
+                # AS DOTTED
                 if(style == "dotted"):
                     if(count == 5):
                         count = 0
@@ -173,6 +180,7 @@ class PrimitiveGraphs:
                             lig = not lig
                             count = 0
 
+                # AS DASHED
                 elif(style == "dashed"):
                     if(count == 15):
                         count = 0
@@ -187,7 +195,8 @@ class PrimitiveGraphs:
                         if(count == 5):
                             lig = not lig
                             count = 0
-                    
+
+                # AS CONTINUOS     
                 else:
                     self.point(x, y, color, width)
 
@@ -199,11 +208,12 @@ class PrimitiveGraphs:
 
                 x = x + x_inc
 
-
+        # PLOT STRAIGHT IN Y < X
         else:
             p = d_y / 2
 
             while y != y2:
+                # AS DOTTED
                 if(style == "dotted"):
                     if(count == 5):
                         count = 0
@@ -219,6 +229,7 @@ class PrimitiveGraphs:
                             lig = not lig
                             count = 0
 
+                # AS DASHED
                 elif(style == "dashed"):
                     if(count == 15):
                         count = 0
@@ -234,6 +245,7 @@ class PrimitiveGraphs:
                             lig = not lig
                             count = 0
 
+                # AS CONTINUOS
                 else:
                     self.point(x, y, color, width)
 
@@ -246,6 +258,7 @@ class PrimitiveGraphs:
                 y = y + y_inc
 
 
+    # --- RENDER CIRCLE --- #
     def circle(self, x_c, y_c, radius, color, width):
         x = 0
         y = radius
@@ -253,6 +266,7 @@ class PrimitiveGraphs:
 
         self.point(x, y, color, width)
 
+        # PLOT POINT IN CIRCLE RADIUS
         while x < y:
             x = x + 1
 
@@ -275,15 +289,7 @@ class PrimitiveGraphs:
             self.point(x + x_c, -y + y_c, color, width)
 
 
-    def paint(self, x, y, color):
-        if "black" == color(x, y): 
-            self.point(x, y, color, 2)
-            self.paint(x + 1, y, color)
-            self.paint(x - 1, y, color)
-            self.paint(x, y + 1, color)
-            self.paint(x, y - 1, color)
-
-
+    # --- DEFINE PROJECTIONS COORDINATES --- #
     def projection(self, x, y, z, f = 100):
         F = f * 50
         x_der = (x * f)/(F - z)
@@ -291,6 +297,7 @@ class PrimitiveGraphs:
         return (x_der, y_der)
 
 
+    # --- RENDER TEXT --- #
     def text(self, x, y, word, color=color_rgb(28, 51, 59), width=10, style="bold"):
         x_text = x + self.x_max/ 2
         y_text = self.y_max / 2 - y
@@ -302,14 +309,15 @@ class PrimitiveGraphs:
         t.draw(self.win)
 
     
+    # --- DEFINE ANGLE DIRECTION --- #
     def direction(self, x, y, dir):
         if(x == 0):
             return 0
         
-        #Caso decole, adicionar 180 graus
         m = y / x
         a = math.atan(m) 
 
+        # CASES ADD PI IN RADIUS ANGLE
         if(dir == "P" and x > 0):
             a += math.pi
         elif(dir == "D" and x < 0):
@@ -318,6 +326,7 @@ class PrimitiveGraphs:
         return a
 
 
+    # --- ROTATION POINTS --- #
     def rotation(self, x_graph, y_graph, x, y, ang):
         x_der = x * math.cos(ang) - y * math.sin(ang)
         y_der = y * math.cos(ang) + x * math.sin(ang)
@@ -325,7 +334,9 @@ class PrimitiveGraphs:
         return (int(x_der + x_graph), int(y_der + y_graph))
 
 
+    # --- RENDER AIRPLANE ICONS --- #
     def airplaneIcon(self, x_graph, y_graph, dir, text):
+        # SET AIRPLANE ICON COLOR
         if(dir == "D"):
             color = "red"
         elif(dir == "P"):
@@ -335,8 +346,10 @@ class PrimitiveGraphs:
 
         x, y = 0, 0
 
+        # GET ANGLE IN X, Y GRAPHICS COORDINATES
         ang = self.direction(x_graph, y_graph, dir)
 
+        # ROTATE ALL AIRPLANE'S POINTS
         x1, y1 = self.rotation(x_graph, y_graph, x, y, ang)
         x2, y2 = self.rotation(x_graph, y_graph, x-20, y, ang)
 
@@ -352,6 +365,7 @@ class PrimitiveGraphs:
         x9, y9 = self.rotation(x_graph, y_graph, x-16, y, ang)
         x10, y10 = self.rotation(x_graph, y_graph, x-18, y-4, ang)
 
+        # RENDER AIRPLANES'S STRAIGHT
         self.straight(x1, y1, x2, y2, color, 2)
         self.straight(x3, y3, x4, y4, color, 2)
         self.straight(x5, y5, x6, y6, color, 2)
@@ -360,28 +374,30 @@ class PrimitiveGraphs:
 
         self.text(x_graph + 35, y_graph + 35, text, color)
 
-
+    # --- RENDER BACKGROUND RADAR --- #
     def backgroundScreen(self):
-        #Retas do Arco
+        # STRAIGHT
         self.straight(0, -(size / 2) + 100, 0, (size / 2) - 100, color_rgb(28, 51, 59), 2, "dashed")
         self.straight(-(size / 2) + 100, 0, (size / 2) -100, 0, color_rgb(28, 51, 59), 2, "dashed")
         self.straight(-(size / 2) + 220, (size / 2) - 220, (size / 2) - 220, -(size / 2) + 220, color_rgb(28, 51, 59), 2, "dotted")
         self.straight((size / 2) - 220, (size / 2) - 220, -(size / 2) + 220, -(size / 2) + 220, color_rgb(28, 51, 59), 2, "dotted")
 
-        #Círculos do Arco
+        # CIRCLE
         self.circle(0, 0, size / 2 - 100, color_rgb(28, 51, 59), 1)
         self.circle(0, 0, size / 2 - 200, color_rgb(28, 51, 59), 1)
         self.circle(0, 0, size / 2 - 300, color_rgb(28, 51, 59), 1)
         self.circle(0, 0, size / 2 - 400, color_rgb(28, 51, 59), 1)
 
-        #Aeroportos
+        # AIRPORTS
         self.straight(100, 200, 200, 90, color_rgb(28, 51, 59), 2)
 
+        # RENDER BACKGROUND TEXTS
         self.backgroundScreenText()
 
 
+    # --- RENDER BACKGROUND SCREEN TEXT -- #
     def backgroundScreenText(self):
-        #Graus
+        # DEGREES
         self.text((size / 2) -50, 0, "0°/360°")
         self.text((size / 2) - 170, (size / 2) - 170, "45°")
         self.text(-(size / 2) + 170, (size / 2) - 170, "135°")
@@ -391,18 +407,22 @@ class PrimitiveGraphs:
         self.text(0, -(size / 2) + 50, "270°")
         self.text((size / 2) - 170, -(size / 2) + 170, "315°")
 
-        #Aeroportos
+        # AIRPORTS
         self.text(150, 145, "Sao Jose Dos Campos", color_rgb(49, 50, 98))
 
 
+    # --- SAVE ZBUFFER --- #
     def saveScreen(self):
         self.background = deepcopy(self.z_buffer)
 
 
+    # --- RELOAD SCREEN -- #
     def reloadScreen(self):
+        # CLEAR SCREEN
         self.win.delete("all")
         self.win.update()
 
+        # REDRAW SCREEN
         for x in range(self.x_max):
             for y in range(self.y_max):
                 if(self.background[int(x)][int(y)] == "empty"):
@@ -413,10 +433,12 @@ class PrimitiveGraphs:
         self.backgroundScreenText()
 
 
+    # --- SEPARE DATA EXCEL ON INTERVAL --- #
     def scan(self, starter):
         datas_scan = []
         last_index = 0
         
+        # SEPARE INTERVAL
         for i in range(int(starter), len(self.datas)):
             if(i != int(starter)):
 
@@ -429,6 +451,7 @@ class PrimitiveGraphs:
         return [datas_scan, last_index]
 
 
+    # --- READ INTERVAL DATA EXCEL VALUES -- #
     def readScan(self, datas):
         for data in datas:
             x,y = self.projection(data[5], data[6], data[7])
