@@ -79,16 +79,11 @@ class PrimitiveGraphs:
             self.win.plotPixel(x+2, y, color)
             self.win.plotPixel(x, y-2, color)
             self.win.plotPixel(x+2, y-2, color)
-
-        try:
-            if((x < 1000 and x > 0) and (y < 1000 and y > 0)):
-                self.z_buffer[int(x)][int(y)] = color
-            else:
-                print(x, y)
-        except ValueError:
-            pass
-        finally:
-            pass
+        
+        if((x < self.x_max and x > 0) and (y < self.y_max and y > 0)):
+            self.z_buffer[int(x)][int(y)] = color
+        else:
+            print(x, y)
 
 
     def accuratePoint(self, x, y, color, width):
@@ -289,7 +284,7 @@ class PrimitiveGraphs:
             self.paint(x, y - 1, color)
 
 
-    def projection(self, x, y, z = 200, f = 20):
+    def projection(self, x, y, z, f = 100):
         F = f * 50
         x_der = (x * f)/(F - z)
         y_der = (y * f)/(F - z)
@@ -434,7 +429,7 @@ class PrimitiveGraphs:
         return [datas_scan, last_index]
 
 
-    def learnScan(self, datas):
+    def readScan(self, datas):
         for data in datas:
             x,y = self.projection(data[5], data[6], data[7])
             self.airplaneIcon(x, y, data[1], data[2])
@@ -444,26 +439,23 @@ class PrimitiveGraphs:
 size = 1000
 primitive = PrimitiveGraphs(size, size)
 
-# primitive.backgroundScreen()
-# primitive.saveScreen()
+primitive.backgroundScreen()
+primitive.saveScreen()
 
 scan_datas, last_index = primitive.scan(0)
-primitive.learnScan(scan_datas)
+primitive.readScan(scan_datas)
 
-time.sleep(1)
+time.sleep(5)
 
 while True:
-    # primitive.reloadScreen() 
-    primitive.win.delete('all')
-    primitive.win.update()
+    primitive.reloadScreen()
 
     scan_datas, last_index = primitive.scan(last_index)
-    primitive.learnScan(scan_datas)
+    primitive.readScan(scan_datas)
 
-    time.sleep(1)
+    time.sleep(5)
 
     if(last_index == 0):
+        time.sleep(5)
+        primitive.win.close()
         break
-
-
-primitive.win.getMouse()
