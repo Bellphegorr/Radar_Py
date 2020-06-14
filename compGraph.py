@@ -290,7 +290,7 @@ class PrimitiveGraphs:
 
 
     # --- DEFINE PROJECTIONS COORDINATES --- #
-    def projection(self, x, y, z, f = 100):
+    def projection(self, x, y, z, f = 1000):
         F = f * 50
         x_der = (x * f)/(F - z)
         y_der = (y * f)/(F - z)
@@ -389,7 +389,10 @@ class PrimitiveGraphs:
         self.circle(0, 0, size / 2 - 400, color_rgb(28, 51, 59), 1)
 
         # AIRPORTS
-        self.straight(100, 200, 200, 90, color_rgb(28, 51, 59), 2)
+        self.point(0, 0, "white", 2)
+        self.straight(-50, -50, 50, 50, color_rgb(38, 38, 49), 2)
+        self.straight(100, 200, 200, 90, color_rgb(38, 38, 49), 2)
+        self.straight(-100, -200, -200, -90, color_rgb(38, 38, 49), 2)
 
         # RENDER BACKGROUND TEXTS
         self.backgroundScreenText()
@@ -398,17 +401,48 @@ class PrimitiveGraphs:
     # --- RENDER BACKGROUND SCREEN TEXT -- #
     def backgroundScreenText(self):
         # DEGREES
-        self.text((size / 2) -50, 0, "0°/360°")
-        self.text((size / 2) - 170, (size / 2) - 170, "45°")
-        self.text(-(size / 2) + 170, (size / 2) - 170, "135°")
-        self.text(0, (size / 2) -50, "90°")
-        self.text(-(size / 2) + 50, 0, "180°")
-        self.text(-(size / 2) + 170, -(size / 2) + 170, "225°")
-        self.text(0, -(size / 2) + 50, "270°")
-        self.text((size / 2) - 170, -(size / 2) + 170, "315°")
+        self.text(0, (size / 2) - 120, "0°")
+        self.text((size / 2) - 420, (size / 2) - 130, "15°")
+        self.text((size / 2) - 330, (size / 2) - 180, "30°")
+        self.text((size / 2) - 240, (size / 2) - 230, "45°")
+        self.text((size / 2) - 180, (size / 2) - 320, "60°")
+        self.text((size / 2) - 150, (size / 2) - 400, "75°")
+
+        self.text((size / 2) -120, 0, "90°")
+        self.text((size / 2) - 420, -(size / 2) + 130, "105°")
+        self.text((size / 2) - 330, -(size / 2) + 180, "120°")
+        self.text((size / 2) - 240, -(size / 2) + 230, "135°")
+        self.text((size / 2) - 180, -(size / 2) + 320, "150°")
+        self.text((size / 2) - 150, -(size / 2) + 400, "165°")
+
+        self.text(0, -(size / 2) + 120, "180°")
+        self.text(-(size / 2) + 420, -(size / 2) + 130, "195°")
+        self.text(-(size / 2) + 330, -(size / 2) + 180, "210°")
+        self.text(-(size / 2) + 240, -(size / 2) + 230, "225°")
+        self.text(-(size / 2) + 180, -(size / 2) + 320, "240°")
+        self.text(-(size / 2) + 150, -(size / 2) + 400, "255°")
+
+        self.text(-(size / 2) + 120, 0, "270°")
+        self.text(-(size / 2) + 420, (size / 2) - 130, "345°")
+        self.text(-(size / 2) + 330, (size / 2) - 180, "330°")
+        self.text(-(size / 2) + 240, (size / 2) - 230, "315°")
+        self.text(-(size / 2) + 180, (size / 2) - 320, "300°")
+        self.text(-(size / 2) + 150, (size / 2) - 400, "285°")
+
+        # mm RAIO
+        self.text(0, size / 2 - 390, "11,4mm")
+        self.text(0, size / 2 - 290, "22,9mm")
+        self.text(0, size / 2 - 190, "34,3mm")
+
+        self.text(0, size / 2 - 590, "-11,4mm")
+        self.text(0, size / 2 - 690, "-22,9mm")
+        self.text(0, size / 2 - 790, "-34,3mm")
 
         # AIRPORTS
+        self.text(50, -30, "GUARULHOS", "white")
+        self.text(0, 0, "Guarulhos", color_rgb(49, 50, 98))
         self.text(150, 145, "Sao Jose Dos Campos", color_rgb(49, 50, 98))
+        self.text(-150, -145, "Sao Bernado", color_rgb(49, 50, 98))
 
 
     # --- SAVE ZBUFFER --- #
@@ -464,6 +498,7 @@ primitive = PrimitiveGraphs(size, size)
 
 primitive.backgroundScreen()
 primitive.saveScreen()
+primitive.win.getMouse()
 
 scan_datas, last_index = primitive.scan(0)
 primitive.readScan(scan_datas)
