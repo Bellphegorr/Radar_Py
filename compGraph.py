@@ -4,7 +4,7 @@ from graphics import *
 from copy import deepcopy
 # MATH LIBRARY
 import math
-# EXCEL LEARN LIBRARY
+# EXCEL READ LIBRARY
 from openpyxl import load_workbook
 from openpyxl.formula import Tokenizer
 # DEBOUNCE TIME
@@ -29,14 +29,14 @@ class PrimitiveGraphs:
         for i in range(width):
             self.z_buffer.append(["empty" for j in range(height)])
 
-        # STARTER EXCEL LEARN LIBRARY
+        # STARTER EXCEL READ LIBRARY
         wb = load_workbook(filename = 'plnilha de radar.xlsx', data_only=True)
         sheet = wb.active
 
         max_row = sheet.max_row
         max_col = sheet.max_column
 
-        # LEARN EXCEL AND SAVE CELL VALUES
+        # READ EXCEL AND SAVE CELL VALUES
         self.datas = []
 
         for row in range(2, max_row + 1):
@@ -439,7 +439,7 @@ class PrimitiveGraphs:
         self.text(0, size / 2 - 790, "-34,3mm")
 
         # AIRPORTS
-        self.text(50, -30, "GUARULHOS", "white")
+        self.text(50, -30, "GUARULHOS", "white", 15)
         self.text(0, 0, "Guarulhos", color_rgb(49, 50, 98))
         self.text(150, 145, "Sao Jose Dos Campos", color_rgb(49, 50, 98))
         self.text(-150, -145, "Sao Bernado", color_rgb(49, 50, 98))
